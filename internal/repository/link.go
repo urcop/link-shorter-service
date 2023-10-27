@@ -30,13 +30,13 @@ func (l *LinkRepositoryImpl) CreateLink(link *model.Link) error {
 }
 
 func (l *LinkRepositoryImpl) GetLink(id string) (*model.Link, error) {
-	var link *model.Link
+	var link model.Link
 
 	result := l.db.Where("id = ?", id).First(&link)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	return link, nil
+	return &link, nil
 }
 
 func (l *LinkRepositoryImpl) GetAllLinks() ([]*model.Link, error) {
@@ -80,7 +80,7 @@ func NewLinkRepository() LinkRepository {
 		panic("Cannot open database")
 	}
 
-	pgSvc := &LinkRepositoryImpl{}
+	pgSvc := &LinkRepositoryImpl{db: db}
 	err = db.AutoMigrate(&model.Link{})
 	if err != nil {
 		panic(err)
