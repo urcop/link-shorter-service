@@ -4,6 +4,161 @@
         "contact": {}
     },
     "paths": {
+        "/api/v1/link/": {
+            "get": {
+                "description": "Возвращает список всех доступных ссылок.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Получение всех ссылок",
+                "responses": {
+                    "200": {
+                        "description": "Список ссылок",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_web_link.Link"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/fiber.Map"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Обновляет информацию о существующей ссылке.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Обновление ссылки",
+                "parameters": [
+                    {
+                        "description": "Запрос с данными обновления ссылки",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_web_link.Link"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновленная ссылка",
+                        "schema": {
+                            "$ref": "#/definitions/internal_web_link.Link"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/fiber.Map"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Создает новую ссылку с опциональным коротким URL.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Создание ссылки",
+                "parameters": [
+                    {
+                        "description": "Запрос с данными ссылки",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_web_link.Link"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданная ссылка",
+                        "schema": {
+                            "$ref": "#/definitions/internal_web_link.Link"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/fiber.Map"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/link/{id}/": {
+            "get": {
+                "description": "Возвращает информацию о ссылке по указанному идентификатору.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Получение ссылки по идентификатору",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Идентификатор ссылки",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Информация о ссылке",
+                        "schema": {
+                            "$ref": "#/definitions/internal_web_link.Link"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/fiber.Map"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удаляет существующую ссылку по идентификатору.",
+                "summary": "Удаление ссылки",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Идентификатор ссылки",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ссылка удалена успешно",
+                        "schema": {
+                            "$ref": "#/definitions/fiber.Map"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/fiber.Map"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/status/": {
             "get": {
                 "description": "Get the status of the API",
@@ -24,6 +179,30 @@
         }
     },
     "definitions": {
+        "fiber.Map": {
+            "type": "object",
+            "additionalProperties": true
+        },
+        "github.com_urcop_go-fiber-template_internal_web_link.Link": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "string"
+                },
+                "clicked": {
+                    "type": "integer"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "random": {
+                    "type": "boolean"
+                },
+                "short_link": {
+                    "type": "string"
+                }
+            }
+        },
         "github.com_urcop_go-fiber-template_internal_web_status.Response": {
             "type": "object",
             "properties": {
@@ -34,6 +213,26 @@
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_web_link.Link": {
+            "type": "object",
+            "properties": {
+                "ID": {
+                    "type": "string"
+                },
+                "clicked": {
+                    "type": "integer"
+                },
+                "link": {
+                    "type": "string"
+                },
+                "random": {
+                    "type": "boolean"
+                },
+                "short_link": {
                     "type": "string"
                 }
             }

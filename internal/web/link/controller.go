@@ -15,6 +15,15 @@ type Controller struct {
 	linkService services.LinkService
 }
 
+// CreateLink создает новую ссылку.
+// @Summary Создание ссылки
+// @Description Создает новую ссылку с опциональным коротким URL.
+// @Accept json
+// @Produce json
+// @Param request body Link true "Запрос с данными ссылки"
+// @Success 201 {object} Link "Созданная ссылка"
+// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Router /api/v1/link/ [post]
 func (ctrl *Controller) CreateLink(ctx *fiber.Ctx) error {
 	ctx.Accepts("application/json")
 
@@ -43,6 +52,13 @@ func (ctrl *Controller) CreateLink(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusCreated).JSON(link)
 }
 
+// GetLinks возвращает все доступные ссылки.
+// @Summary Получение всех ссылок
+// @Description Возвращает список всех доступных ссылок.
+// @Produce json
+// @Success 200 {array} Link "Список ссылок"
+// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Router /api/v1/link/ [get]
 func (ctrl *Controller) GetLinks(ctx *fiber.Ctx) error {
 	result, err := ctrl.linkService.GetAll()
 	if err != nil {
@@ -55,6 +71,14 @@ func (ctrl *Controller) GetLinks(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(result)
 }
 
+// GetLink возвращает информацию о конкретной ссылке.
+// @Summary Получение ссылки по идентификатору
+// @Description Возвращает информацию о ссылке по указанному идентификатору.
+// @Produce json
+// @Param id path string true "Идентификатор ссылки"
+// @Success 200 {object} Link "Информация о ссылке"
+// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Router /api/v1/link/{id}/ [get]
 func (ctrl *Controller) GetLink(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 
@@ -69,6 +93,15 @@ func (ctrl *Controller) GetLink(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(links)
 }
 
+// UpdateLink обновляет существующую ссылку.
+// @Summary Обновление ссылки
+// @Description Обновляет информацию о существующей ссылке.
+// @Accept json
+// @Produce json
+// @Param request body Link true "Запрос с данными обновления ссылки"
+// @Success 200 {object} Link "Обновленная ссылка"
+// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Router /api/v1/link/ [put]
 func (ctrl *Controller) UpdateLink(ctx *fiber.Ctx) error {
 	ctx.Accepts("application/json")
 	var link *model.Link
@@ -92,6 +125,13 @@ func (ctrl *Controller) UpdateLink(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(link)
 }
 
+// DeleteLink удаляет существующую ссылку.
+// @Summary Удаление ссылки
+// @Description Удаляет существующую ссылку по идентификатору.
+// @Param id path string true "Идентификатор ссылки"
+// @Success 200 {object} fiber.Map "Ссылка удалена успешно"
+// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Router /api/v1/link/{id}/ [delete]
 func (ctrl *Controller) DeleteLink(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 

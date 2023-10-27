@@ -1,4 +1,20 @@
 definitions:
+  fiber.Map:
+    additionalProperties: true
+    type: object
+  github.com_urcop_go-fiber-template_internal_web_link.Link:
+    properties:
+      ID:
+        type: string
+      clicked:
+        type: integer
+      link:
+        type: string
+      random:
+        type: boolean
+      short_link:
+        type: string
+    type: object
   github.com_urcop_go-fiber-template_internal_web_status.Response:
     properties:
       code:
@@ -6,6 +22,19 @@ definitions:
       data:
         type: string
       message:
+        type: string
+    type: object
+  internal_web_link.Link:
+    properties:
+      ID:
+        type: string
+      clicked:
+        type: integer
+      link:
+        type: string
+      random:
+        type: boolean
+      short_link:
         type: string
     type: object
   internal_web_status.Response:
@@ -20,6 +49,108 @@ definitions:
 info:
   contact: {}
 paths:
+  /api/v1/link/:
+    get:
+      description: Возвращает список всех доступных ссылок.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Список ссылок
+          schema:
+            items:
+              $ref: '#/definitions/internal_web_link.Link'
+            type: array
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Получение всех ссылок
+    post:
+      consumes:
+      - application/json
+      description: Создает новую ссылку с опциональным коротким URL.
+      parameters:
+      - description: Запрос с данными ссылки
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_web_link.Link'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Созданная ссылка
+          schema:
+            $ref: '#/definitions/internal_web_link.Link'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Создание ссылки
+    put:
+      consumes:
+      - application/json
+      description: Обновляет информацию о существующей ссылке.
+      parameters:
+      - description: Запрос с данными обновления ссылки
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_web_link.Link'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Обновленная ссылка
+          schema:
+            $ref: '#/definitions/internal_web_link.Link'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Обновление ссылки
+  /api/v1/link/{id}/:
+    delete:
+      description: Удаляет существующую ссылку по идентификатору.
+      parameters:
+      - description: Идентификатор ссылки
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Ссылка удалена успешно
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Удаление ссылки
+    get:
+      description: Возвращает информацию о ссылке по указанному идентификатору.
+      parameters:
+      - description: Идентификатор ссылки
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Информация о ссылке
+          schema:
+            $ref: '#/definitions/internal_web_link.Link'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Получение ссылки по идентификатору
   /api/v1/status/:
     get:
       description: Get the status of the API
