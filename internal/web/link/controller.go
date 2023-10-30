@@ -15,27 +15,14 @@ type Controller struct {
 	linkService services.LinkService
 }
 
-func (ctrl *Controller) Redirect(ctx *fiber.Ctx) error {
-	param := ctx.Params("redirect")
-	url, err := ctrl.linkService.Get(param)
-	if err != nil {
-		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{
-			"status":  http.StatusNotFound,
-			"message": "error parse link",
-			"error":   err.Error(),
-		})
-	}
-	return ctx.Redirect(url.Link)
-}
-
-// CreateLink создает новую ссылку.
-// @Summary Создание ссылки
-// @Description Создает новую ссылку с опциональным коротким URL.
+// CreateLink Create a new Link
+// @Summary Create Link
+// @Description Creates a new link with an optional short URL.
 // @Accept json
 // @Produce json
-// @Param request body Link true "Запрос с данными ссылки"
-// @Success 201 {object} Link "Созданная ссылка"
-// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Param request body Link true "Query with Link data"
+// @Success 201 {object} Link "Created Link"
+// @Failure 500 {object} fiber.Map "Internal Server Error"
 // @Router /api/v1/link/ [post]
 func (ctrl *Controller) CreateLink(ctx *fiber.Ctx) error {
 	ctx.Accepts("application/json")
@@ -65,12 +52,12 @@ func (ctrl *Controller) CreateLink(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusCreated).JSON(link)
 }
 
-// GetLinks возвращает все доступные ссылки.
-// @Summary Получение всех ссылок
-// @Description Возвращает список всех доступных ссылок.
+// GetLinks returns all available links.
+// @Summary Getting all links
+// @Description Returns a list of all available links.
 // @Produce json
-// @Success 200 {array} Link "Список ссылок"
-// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Success 200 {array} Link "List of links"
+// @Failure 500 {object} fiber.Map "Internal Server Error"
 // @Router /api/v1/link/ [get]
 func (ctrl *Controller) GetLinks(ctx *fiber.Ctx) error {
 	result, err := ctrl.linkService.GetAll()
@@ -84,16 +71,16 @@ func (ctrl *Controller) GetLinks(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(result)
 }
 
-// GetLink возвращает информацию о конкретной ссылке.
-// @Summary Получение ссылки по идентификатору
-// @Description Возвращает информацию о ссылке по указанному идентификатору.
+// GetLink Returns information about a specific link.
+// @Summary Getting a link by short link
+// @Description Returns information about the link by the short link.
 // @Produce json
-// @Param id path string true "Идентификатор ссылки"
-// @Success 200 {object} Link "Информация о ссылке"
-// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Param shortLink path string true "short link"
+// @Success 200 {object} Link "Link info"
+// @Failure 500 {object} fiber.Map "Internal Server Error"
 // @Router /api/v1/link/{id}/ [get]
 func (ctrl *Controller) GetLink(ctx *fiber.Ctx) error {
-	id := ctx.Params("id")
+	id := ctx.Params("shortLink")
 
 	links, err := ctrl.linkService.Get(id)
 	if err != nil {
@@ -106,14 +93,14 @@ func (ctrl *Controller) GetLink(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(links)
 }
 
-// UpdateLink обновляет существующую ссылку.
-// @Summary Обновление ссылки
-// @Description Обновляет информацию о существующей ссылке.
+// UpdateLink Deletes an existing link.
+// @Summary Update link
+// @Description Update an existing reference by ID
 // @Accept json
 // @Produce json
-// @Param request body Link true "Запрос с данными обновления ссылки"
-// @Success 200 {object} Link "Обновленная ссылка"
-// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// @Param request body Link true "Query with link update data"
+// @Success 200 {object} Link "Updated link"
+// @Failure 500 {object} fiber.Map "Internal Server Error"
 // @Router /api/v1/link/ [put]
 func (ctrl *Controller) UpdateLink(ctx *fiber.Ctx) error {
 	ctx.Accepts("application/json")
@@ -138,12 +125,12 @@ func (ctrl *Controller) UpdateLink(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(link)
 }
 
-// DeleteLink удаляет существующую ссылку.
-// @Summary Удаление ссылки
-// @Description Удаляет существующую ссылку по идентификатору.
-// @Param id path string true "Идентификатор ссылки"
-// @Success 200 {object} fiber.Map "Ссылка удалена успешно"
-// @Failure 500 {object} fiber.Map "Внутренняя ошибка сервера"
+// DeleteLink Deletes an existing link.
+// @Summary Delete link from db
+// @Description Deletes an existing reference by ID
+// @Param id path string true "Link ID"
+// @Success 200 {object} fiber.Map "Link deleted successfully"
+// @Failure 500 {object} fiber.Map "Internal Server Error"
 // @Router /api/v1/link/{id}/ [delete]
 func (ctrl *Controller) DeleteLink(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
@@ -163,12 +150,34 @@ func (ctrl *Controller) DeleteLink(ctx *fiber.Ctx) error {
 	})
 }
 
+// Redirect
+// @Summary Redirect to a URL
+// @Description Redirects to the target URL associated with the given short link.
+// @ID redirect
+// @Produce json
+// @Param redirect path string true "Short link for redirection"
+// @Success 302 {string} string "Redirects to the target URL"
+// @Failure 404 {object} fiber.Map "Error response with 404 status code"
+// @Router /r/{redirect} [get]
+func (ctrl *Controller) Redirect(ctx *fiber.Ctx) error {
+	param := ctx.Params("redirect")
+	url, err := ctrl.linkService.Get(param)
+	if err != nil {
+		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{
+			"status":  http.StatusNotFound,
+			"message": "error parse link",
+			"error":   err.Error(),
+		})
+	}
+	return ctx.Redirect(url.Link)
+}
+
 func (ctrl *Controller) DefineRouter(app *fiber.App) {
 	router := app.Group("/api/v1/link")
 
 	router.Post("/", ctrl.CreateLink)
 	router.Get("/", ctrl.GetLinks)
-	router.Get("/:id/", ctrl.GetLink)
+	router.Get("/:shortLink/", ctrl.GetLink)
 	router.Delete("/:id/", ctrl.DeleteLink)
 	router.Put("/", ctrl.UpdateLink)
 
