@@ -6,6 +6,8 @@ import (
 	"github.com/urcop/go-fiber-template/internal/model"
 	"github.com/urcop/go-fiber-template/internal/services"
 	"github.com/urcop/go-fiber-template/internal/web"
+	"github.com/urcop/go-fiber-template/internal/web/render"
+	"github.com/urcop/go-fiber-template/internal/web/validators"
 	"net/http"
 )
 
@@ -30,15 +32,16 @@ func (ctrl *Controller) CreateLink(ctx *fiber.Ctx) error {
 	var link model.Link
 	err := ctx.BodyParser(&link)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"status":  http.StatusInternalServerError,
-			"message": "error parsing JSON",
-			"error":   err.Error(),
-		})
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error parsing JSON")
 	}
 
 	if link.Random {
 		link.ShortLink = helpers.RandomUrl(8)
+	}
+
+	err = validators.LinkValidator(&link)
+	if err != nil {
+		return render.SendError(ctx, http.StatusBadRequest, err, "invalid data")
 	}
 
 	err = ctrl.linkService.Create(&link)
@@ -62,11 +65,7 @@ func (ctrl *Controller) CreateLink(ctx *fiber.Ctx) error {
 func (ctrl *Controller) GetLinks(ctx *fiber.Ctx) error {
 	result, err := ctrl.linkService.GetAll()
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"status":  http.StatusInternalServerError,
-			"message": "error getting all links",
-			"error":   err.Error(),
-		})
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error getting all links")
 	}
 	return ctx.Status(http.StatusOK).JSON(result)
 }
@@ -84,11 +83,7 @@ func (ctrl *Controller) GetLink(ctx *fiber.Ctx) error {
 
 	links, err := ctrl.linkService.Get(id)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"status":  http.StatusInternalServerError,
-			"message": "error getting link",
-			"error":   err.Error(),
-		})
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error getting link")
 	}
 	return ctx.Status(http.StatusOK).JSON(links)
 }
@@ -104,23 +99,21 @@ func (ctrl *Controller) GetLink(ctx *fiber.Ctx) error {
 // @Router /api/v1/link/ [put]
 func (ctrl *Controller) UpdateLink(ctx *fiber.Ctx) error {
 	ctx.Accepts("application/json")
-	var link *model.Link
+	var link model.Link
 
 	err := ctx.BodyParser(&link)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"status":  http.StatusInternalServerError,
-			"message": "error parsing JSON",
-			"error":   err.Error(),
-		})
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error parsing JSON")
 	}
-	err = ctrl.linkService.Update(link)
+
+	err = validators.LinkValidator(&link)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"status":  http.StatusInternalServerError,
-			"message": "error update link",
-			"error":   err.Error(),
-		})
+		return render.SendError(ctx, http.StatusBadRequest, err, "invalid data")
+	}
+
+	err = ctrl.linkService.Update(&link)
+	if err != nil {
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error update link")
 	}
 	return ctx.Status(http.StatusOK).JSON(link)
 }
@@ -137,17 +130,9 @@ func (ctrl *Controller) DeleteLink(ctx *fiber.Ctx) error {
 
 	err := ctrl.linkService.Delete(id)
 	if err != nil {
-		return ctx.Status(http.StatusInternalServerError).JSON(fiber.Map{
-			"status":  http.StatusInternalServerError,
-			"message": "error delete link",
-			"error":   err.Error(),
-		})
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error delete link")
 	}
-	return ctx.Status(http.StatusOK).JSON(fiber.Map{
-		"status":  http.StatusOK,
-		"message": "link deleted",
-		"error":   nil,
-	})
+	return render.JSONAPIPayload(ctx, http.StatusOK, "link deleted")
 }
 
 // Redirect
@@ -163,11 +148,7 @@ func (ctrl *Controller) Redirect(ctx *fiber.Ctx) error {
 	param := ctx.Params("redirect")
 	url, err := ctrl.linkService.Get(param)
 	if err != nil {
-		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{
-			"status":  http.StatusNotFound,
-			"message": "error parse link",
-			"error":   err.Error(),
-		})
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error parse link")
 	}
 	return ctx.Redirect(url.Link)
 }
