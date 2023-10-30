@@ -29,10 +29,10 @@ func (l *LinkRepositoryImpl) CreateLink(link *model.Link) error {
 	return nil
 }
 
-func (l *LinkRepositoryImpl) GetLink(id string) (*model.Link, error) {
+func (l *LinkRepositoryImpl) GetLink(shortLink string) (*model.Link, error) {
 	var link model.Link
 
-	result := l.db.Where("id = ?", id).First(&link)
+	result := l.db.Where("short_link = ?", shortLink).First(&link)
 	if result.Error != nil {
 		return nil, result.Error
 	}

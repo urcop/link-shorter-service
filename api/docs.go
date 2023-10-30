@@ -18,23 +18,23 @@ const docTemplate = `{
     "paths": {
         "/api/v1/link/": {
             "get": {
-                "description": "Возвращает список всех доступных ссылок.",
+                "description": "Returns a list of all available links.",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Получение всех ссылок",
+                "summary": "Getting all links",
                 "responses": {
                     "200": {
-                        "description": "Список ссылок",
+                        "description": "List of links",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/internal_web_link.Link"
+                                "$ref": "#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link"
                             }
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/fiber.Map"
                         }
@@ -42,34 +42,34 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Обновляет информацию о существующей ссылке.",
+                "description": "Update an existing reference by ID",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Обновление ссылки",
+                "summary": "Update link",
                 "parameters": [
                     {
-                        "description": "Запрос с данными обновления ссылки",
+                        "description": "Query with link update data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_web_link.Link"
+                            "$ref": "#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Обновленная ссылка",
+                        "description": "Updated link",
                         "schema": {
-                            "$ref": "#/definitions/internal_web_link.Link"
+                            "$ref": "#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/fiber.Map"
                         }
@@ -77,34 +77,34 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Создает новую ссылку с опциональным коротким URL.",
+                "description": "Creates a new link with an optional short URL.",
                 "consumes": [
                     "application/json"
                 ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Создание ссылки",
+                "summary": "Create Link",
                 "parameters": [
                     {
-                        "description": "Запрос с данными ссылки",
+                        "description": "Query with Link data",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_web_link.Link"
+                            "$ref": "#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Созданная ссылка",
+                        "description": "Created Link",
                         "schema": {
-                            "$ref": "#/definitions/internal_web_link.Link"
+                            "$ref": "#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/fiber.Map"
                         }
@@ -114,29 +114,29 @@ const docTemplate = `{
         },
         "/api/v1/link/{id}/": {
             "get": {
-                "description": "Возвращает информацию о ссылке по указанному идентификатору.",
+                "description": "Returns information about the link by the short link.",
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Получение ссылки по идентификатору",
+                "summary": "Getting a link by short link",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Идентификатор ссылки",
-                        "name": "id",
+                        "description": "short link",
+                        "name": "shortLink",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Информация о ссылке",
+                        "description": "Link info",
                         "schema": {
-                            "$ref": "#/definitions/internal_web_link.Link"
+                            "$ref": "#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/fiber.Map"
                         }
@@ -144,12 +144,12 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Удаляет существующую ссылку по идентификатору.",
-                "summary": "Удаление ссылки",
+                "description": "Deletes an existing reference by ID",
+                "summary": "Delete link from db",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Идентификатор ссылки",
+                        "description": "Link ID",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -157,13 +157,13 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Ссылка удалена успешно",
+                        "description": "Link deleted successfully",
                         "schema": {
                             "$ref": "#/definitions/fiber.Map"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/fiber.Map"
                         }
@@ -183,7 +183,40 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/internal_web_status.Response"
+                            "$ref": "#/definitions/github.com_urcop_go-fiber-template_internal_web_status.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/r/{redirect}": {
+            "get": {
+                "description": "Redirects to the target URL associated with the given short link.",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Redirect to a URL",
+                "operationId": "redirect",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Short link for redirection",
+                        "name": "redirect",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirects to the target URL",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Error response with 404 status code",
+                        "schema": {
+                            "$ref": "#/definitions/fiber.Map"
                         }
                     }
                 }
