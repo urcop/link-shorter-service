@@ -15,6 +15,19 @@ type Controller struct {
 	linkService services.LinkService
 }
 
+func (ctrl *Controller) Redirect(ctx *fiber.Ctx) error {
+	param := ctx.Params("redirect")
+	url, err := ctrl.linkService.Get(param)
+	if err != nil {
+		return ctx.Status(http.StatusNotFound).JSON(fiber.Map{
+			"status":  http.StatusNotFound,
+			"message": "error parse link",
+			"error":   err.Error(),
+		})
+	}
+	return ctx.Redirect(url.Link)
+}
+
 // CreateLink создает новую ссылку.
 // @Summary Создание ссылки
 // @Description Создает новую ссылку с опциональным коротким URL.
@@ -158,6 +171,9 @@ func (ctrl *Controller) DefineRouter(app *fiber.App) {
 	router.Get("/:id/", ctrl.GetLink)
 	router.Delete("/:id/", ctrl.DeleteLink)
 	router.Put("/", ctrl.UpdateLink)
+
+	// localhost:3000/r/<short link>
+	app.Get("/r/:redirect/", ctrl.Redirect)
 }
 
 func NewLinkController(link services.LinkService) *Controller {
