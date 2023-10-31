@@ -42,7 +42,7 @@ func (l *LinkRepositoryImpl) GetLink(shortLink string) (*model.Link, error) {
 func (l *LinkRepositoryImpl) GetAllLinks() ([]*model.Link, error) {
 	var links []*model.Link
 
-	result := l.db.Find(&links)
+	result := l.db.Order("clicked desc").Find(&links)
 	if result.Error != nil {
 		return nil, result.Error
 	}
