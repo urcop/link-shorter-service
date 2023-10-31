@@ -1,7 +1,6 @@
 package services
 
 import (
-	"github.com/google/uuid"
 	"github.com/urcop/go-fiber-template/internal/model"
 	"github.com/urcop/go-fiber-template/internal/repository"
 )
@@ -19,7 +18,6 @@ type LinkServiceImpl struct {
 }
 
 func (s *LinkServiceImpl) Create(link *model.Link) error {
-	link.ID = uuid.New().String()
 	return s.repos.CreateLink(link)
 }
 
