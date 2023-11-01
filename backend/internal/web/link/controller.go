@@ -146,20 +146,22 @@ func (ctrl *Controller) DeleteLink(ctx *fiber.Ctx) error {
 // @Router /r/{redirect} [get]
 func (ctrl *Controller) Redirect(ctx *fiber.Ctx) error {
 	param := ctx.Params("redirect")
-	link, err := ctrl.linkService.Get(param)
 
+	link, err := ctrl.linkService.Get(param)
 	if err != nil {
 		return render.SendError(ctx, http.StatusInternalServerError, err, "error parse link")
 	}
 
-	link.Clicked++
-	err = ctrl.linkService.Update(link)
+	err = ctrl.linkService.UpdateClicked(link)
+	if err != nil {
+		return render.SendError(ctx, http.StatusInternalServerError, err, "error update link clicked")
+	}
 
 	if err != nil {
 		return render.SendError(ctx, http.StatusInternalServerError, err, "error update link model")
 	}
 
-	return ctx.Redirect(link.Link)
+	return ctx.Redirect(link.Link, fiber.StatusTemporaryRedirect)
 }
 
 func (ctrl *Controller) DefineRouter(app *fiber.App) {
