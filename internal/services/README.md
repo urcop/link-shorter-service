@@ -1,7 +1,0 @@
-# Usecase layer
-
-## example
-
-```go
-
-```

@@ -1,7 +1,0 @@
-# Database layer
-
-## example
-
-```go
-
-```
