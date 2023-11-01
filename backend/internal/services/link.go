@@ -41,7 +41,6 @@ func (s *LinkServiceImpl) Delete(id string) error {
 func (s *LinkServiceImpl) UpdateClicked(link *model.Link) error {
 	link.Clicked++
 	return s.Update(link)
-
 }
 
 func NewLinkService(repos repository.LinkRepository) *LinkServiceImpl {
