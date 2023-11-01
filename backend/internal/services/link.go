@@ -40,13 +40,7 @@ func (s *LinkServiceImpl) Delete(id string) error {
 
 func (s *LinkServiceImpl) UpdateClicked(link *model.Link) error {
 	link.Clicked++
-
-	err := s.Update(link)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return s.Update(link)
 }
 
 func NewLinkService(repos repository.LinkRepository) *LinkServiceImpl {

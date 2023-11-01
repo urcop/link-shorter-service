@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/spf13/cobra"
 	application "github.com/urcop/go-fiber-template/internal/app"
 	"github.com/urcop/go-fiber-template/internal/config"
@@ -24,6 +25,11 @@ func NewServeCmd() *cobra.Command {
 			defer stop()
 
 			app := fiber.New()
+			app.Use(cors.New(cors.Config{
+				AllowOrigins: allowOrigins,
+				AllowMethods: allowMethods,
+				AllowHeaders: allowHeaders,
+			}))
 			cfg := config.GetConfig()
 
 			application.InitApplication(app)

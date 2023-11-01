@@ -1,0 +1,17 @@
+.container{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  h1{
+    font-size: 140px;
+    color: #4F4F4F;
+    margin: 0;
+    span {
+      opacity: 0.30
+    }
+  }
+  svg {
+    margin-top: 30px;
+  }
+}
