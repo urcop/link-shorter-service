@@ -1,0 +1,188 @@
+definitions:
+  fiber.Map:
+    additionalProperties: true
+    type: object
+  github.com_urcop_go-fiber-template_internal_web_link.Link:
+    properties:
+      ID:
+        type: string
+      clicked:
+        type: integer
+      link:
+        type: string
+      random:
+        type: boolean
+      short_link:
+        type: string
+    type: object
+  github.com_urcop_go-fiber-template_internal_web_status.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: string
+      message:
+        type: string
+    type: object
+  internal_web_link.Link:
+    properties:
+      ID:
+        type: string
+      clicked:
+        type: integer
+      link:
+        type: string
+      random:
+        type: boolean
+      short_link:
+        type: string
+    type: object
+  internal_web_status.Response:
+    properties:
+      code:
+        type: integer
+      data:
+        type: string
+      message:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/link/:
+    get:
+      description: Returns a list of all available links.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of links
+          schema:
+            items:
+              $ref: '#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Getting all links
+    post:
+      consumes:
+      - application/json
+      description: Creates a new link with an optional short URL.
+      parameters:
+      - description: Query with Link data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created Link
+          schema:
+            $ref: '#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Create Link
+    put:
+      consumes:
+      - application/json
+      description: Update an existing reference by ID
+      parameters:
+      - description: Query with link update data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated link
+          schema:
+            $ref: '#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Update link
+  /api/v1/link/{id}/:
+    delete:
+      description: Deletes an existing reference by ID
+      parameters:
+      - description: Link ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Link deleted successfully
+          schema:
+            $ref: '#/definitions/fiber.Map'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Delete link from db
+    get:
+      description: Returns information about the link by the short link.
+      parameters:
+      - description: short link
+        in: path
+        name: shortLink
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Link info
+          schema:
+            $ref: '#/definitions/github.com_urcop_go-fiber-template_internal_web_link.Link'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Getting a link by short link
+  /api/v1/status/:
+    get:
+      description: Get the status of the API
+      operationId: Status
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github.com_urcop_go-fiber-template_internal_web_status.Response'
+      summary: Get the status
+  /r/{redirect}:
+    get:
+      description: Redirects to the target URL associated with the given short link.
+      operationId: redirect
+      parameters:
+      - description: Short link for redirection
+        in: path
+        name: redirect
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "302":
+          description: Redirects to the target URL
+          schema:
+            type: string
+        "404":
+          description: Error response with 404 status code
+          schema:
+            $ref: '#/definitions/fiber.Map'
+      summary: Redirect to a URL
+swagger: "2.0"
