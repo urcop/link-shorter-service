@@ -25,8 +25,3 @@ services:
 
 volumes:
   postgres_data:
-
-#networks:
-#  default:
-#    name: "link-shorter-network"
-#    external: true
